@@ -1,5 +1,7 @@
+import { twMerge } from "tailwind-merge";
+
 function Home() {
-    return <div className={"h-[200dvh]"}>Home</div>;
+    return <div className={twMerge(["h-[200dvh]", "bg-green-500"])}>Home</div>;
 }
 
 export default Home;
