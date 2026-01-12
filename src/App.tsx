@@ -1,7 +1,8 @@
-import { BrowserRouter } from "react-router";
+import { RouterProvider } from "react-router";
+import router from "./router/router.tsx";
 
 function App() {
-    return <BrowserRouter></BrowserRouter>;
+    return <RouterProvider router={router} />;
 }
 
 export default App;
