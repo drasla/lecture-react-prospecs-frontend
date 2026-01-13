@@ -15,9 +15,8 @@ function Layout() {
                 사용자가 스크롤을 조금이라도 내리게 되면, (스크롤Y의 값이 0보다 크면)
                 화면에서 사라지게 하길 바람
             */}
-            <div className={twMerge(["fixed", "top-0", "left-0", "right-0", "z-60"])}>
-                <TopHeader />
-            </div>
+            <TopHeader />
+
             {/*
                 1. TopHeader가 나오고 있는 상황
                 Sticky해주되, top-9

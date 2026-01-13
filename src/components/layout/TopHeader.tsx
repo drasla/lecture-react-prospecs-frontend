@@ -16,41 +16,48 @@ function TopHeader() {
     if (!isTopBannerVisible) return null;
 
     return (
-        <div
-            className={twMerge(
-                ["relative", "h-9", "bg-black", "text-white"],
-                ["flex", "justify-center", "items-center"],
-            )}>
-            {/* 슬라이드 */}
-            <Swiper
-                direction={"vertical"}
-                loop={true}
-                autoplay={{ delay: 3000, disableOnInteraction: false }}
-                modules={[Autoplay]}
-                className={twMerge(["w-full", "h-full", "max-w-lg"])}>
-                {NOTICES.map((notice, index) => (
-                    <SwiperSlide
-                        key={index}
-                        className={twMerge([
-                            "w-full",
-                            "h-full",
-                            "!flex",    // CSS에서 !important로 우선순위를 준 것 처럼 동작
-                            "justify-center",
-                            "items-center",
-                        ])}>
-                        <div className={twMerge(["text-xs", "cursor-pointer", "hover:underline"])}>
-                            {notice}
-                        </div>
-                    </SwiperSlide>
-                ))}
-            </Swiper>
+        <div className={twMerge(["fixed", "top-0", "left-0", "right-0", "z-60"])}>
+            <div
+                className={twMerge(
+                    ["relative", "h-9", "bg-black", "text-white"],
+                    ["flex", "justify-center", "items-center"],
+                )}>
+                {/* 슬라이드 */}
+                <Swiper
+                    direction={"vertical"}
+                    loop={true}
+                    autoplay={{ delay: 3000, disableOnInteraction: false }}
+                    modules={[Autoplay]}
+                    className={twMerge(["w-full", "h-full", "max-w-lg"])}>
+                    {NOTICES.map((notice, index) => (
+                        <SwiperSlide
+                            key={index}
+                            className={twMerge([
+                                "w-full",
+                                "h-full",
+                                "!flex", // CSS에서 !important로 우선순위를 준 것 처럼 동작
+                                "justify-center",
+                                "items-center",
+                            ])}>
+                            <div
+                                className={twMerge([
+                                    "text-xs",
+                                    "cursor-pointer",
+                                    "hover:underline",
+                                ])}>
+                                {notice}
+                            </div>
+                        </SwiperSlide>
+                    ))}
+                </Swiper>
 
-            {/* 버튼 */}
-            <button
-                onClick={hideTopBanner}
-                className={twMerge(["absolute", "right-4", "text-white", "cursor-pointer"])}>
-                <IoClose />
-            </button>
+                {/* 버튼 */}
+                <button
+                    onClick={hideTopBanner}
+                    className={twMerge(["absolute", "right-4", "text-white", "cursor-pointer"])}>
+                    <IoClose />
+                </button>
+            </div>
         </div>
     );
 }
