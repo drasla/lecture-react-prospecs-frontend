@@ -13,6 +13,17 @@ export interface RegisterFormType {
     address2?: string;
 }
 
+export interface LoginFormType {
+    email: string;
+    password: string;
+}
+
+export interface LoginResponse {
+    message: string;
+    token: string;
+    user: User;
+}
+
 export interface User {
     email: string;
     name: string;
