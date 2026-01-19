@@ -1,16 +1,17 @@
 import Logo from "../../assets/images/logo_bk.svg";
-import { Link, useLocation } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router";
 import useLayoutStore from "../../stores/useLayoutStore.ts";
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { IoMenu, IoSearch } from "react-icons/io5";
+import useAuthStore from "../../stores/useAuthStore.ts";
 
 const MENU = [
     {
         name: "RUNNING",
-        path: "/running",
+        path: "",
         subMenu: [
-            { name: "신발", path: "/running/shoes" },
+            { name: "신발", path: "/category/6" },
             { name: "의류", path: "/running/clothes" },
             { name: "악세사리", path: "/running/accessories" },
         ],
@@ -60,7 +61,18 @@ const MENU = [
 
 function Header() {
     const { pathname } = useLocation();
+    const navigate = useNavigate();
     const { isTopBannerVisible } = useLayoutStore();
+    const { isLoggedIn, user, logout } = useAuthStore();
+
+    const handleLogout = () => {
+        const confirm = window.confirm("로그아웃 하시겠습니까?");
+        if (confirm) {
+            logout();
+            alert("로그아웃 되었습니다.");
+            navigate("/");
+        }
+    }
 
     // 스크롤이 내려갔는지 안 내려갔는지를 체크해서 스타일링을 해줘야 함
     const [isScrolled, setIsScrolled] = useState(false);
@@ -179,11 +191,20 @@ function Header() {
                             <IoSearch />
                         </button>
                     </div>
-                    <Link
-                        to={"/login"}
-                        className={twMerge(["text-sm", "font-bold", "hidden", "md:block"])}>
-                        LOGIN
-                    </Link>
+                    {isLoggedIn && user ? (
+                        <button
+                            onClick={handleLogout}
+                            className="text-sm font-bold hover:text-gray-500 transition-colors">
+                            LOGOUT
+                        </button>
+                    ) : (
+                        <Link
+                            to={"/login"}
+                            className={twMerge(["text-sm", "font-bold", "hidden", "md:block"])}>
+                            LOGIN
+                        </Link>
+                    )}
+
                     <Link
                         to={"/cart"}
                         className={twMerge(["text-sm", "font-bold", "hidden", "md:block"])}>
