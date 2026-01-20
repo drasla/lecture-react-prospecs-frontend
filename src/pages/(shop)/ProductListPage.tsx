@@ -7,7 +7,7 @@ import Breadcrumbs from "../../components/common/Breadcrumbs.tsx";
 import { getProducts, type GetProductsParams } from "../../api/product.api.ts";
 import type { Product } from "../../types/product.ts";
 import ProductCard from "../../components/shop/ProductCard.tsx";
-import { FILTER_STYLES } from "../../types/productFilter.ts";
+import { FILTER_GENDERS, FILTER_SIZES, FILTER_STYLES } from "../../types/productFilter.ts";
 
 function ProductListPage() {
     const { id } = useParams<{ id: string }>();
@@ -52,6 +52,8 @@ function ProductListPage() {
                     limit: 40,
                     categoryId: Number(id),
                     styles: selectedStyles,
+                    genders: selectedGenders,
+                    sizes: selectedSizes,
                 };
 
                 const response = await getProducts(params);
@@ -101,7 +103,7 @@ function ProductListPage() {
         setSelectedStyles([]);
         setSelectedGenders([]);
         setSelectedSizes([]);
-    }
+    };
 
     return (
         <div className={twMerge(["max-w-400", "mx-auto", "py-40"])}>
@@ -134,26 +136,29 @@ function ProductListPage() {
                                 ["border-b", "border-gray-800"],
                             )}>
                             <h2 className={twMerge(["font-bold", "text-lg"])}>FILTER</h2>
-                            <button className={twMerge(["text-xs", "text-gray-500"])} onClick={handleReset}>
+                            <button
+                                className={twMerge(["text-xs", "text-gray-500"])}
+                                onClick={handleReset}>
                                 초기화
                             </button>
                         </div>
 
                         {/* 필터 관련 */}
-                        <div className={twMerge(["flex", "flex-col"])}>
-                            {/* styles 시작 */}
-                            <div className={twMerge(["space-y-4"])}>
-                                <h3 className={twMerge(["font-bold", "text-sm"])}>종류</h3>
-                                <div className={twMerge(["space-y-2", "pr-2"])}>
-                                    {FILTER_STYLES.map((style, index) => (
-                                        <label key={index} className={twMerge(["flex", "items-center", "gap-3", "cursor-pointer"])}>
-                                            <input type={"checkbox"} className={twMerge(["w-4", "h-4", "rounded"])} onChange={() => handleFilterChange("styles", style.value)} />
-                                            <span className={twMerge(["text-sm", "text-gray-600"])}>{style.label}</span>
-                                        </label>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
+                        <FilterBox
+                            title={"종류"}
+                            type={"styles"}
+                            data={FILTER_STYLES}
+                            selectedValue={selectedStyles}
+                            onChange={handleFilterChange}
+                        />
+                        <FilterBox
+                            title={"성별"}
+                            type={"genders"}
+                            data={FILTER_GENDERS}
+                            selectedValue={selectedGenders}
+                            onChange={handleFilterChange}
+                        />
+                        <FilterButtonBox onChange={handleFilterChange} selectedSizes={selectedSizes}/>
                     </aside>
                 </div>
 
@@ -185,3 +190,78 @@ function ProductListPage() {
 }
 
 export default ProductListPage;
+
+interface FilterBoxProps {
+    title: string;
+    data: { label: string; value: string }[];
+    type: "styles" | "genders";
+    selectedValue: string[];
+    onChange: (type: "styles" | "genders" | "sizes", value: string) => void;
+}
+
+function FilterBox({ title, data, type, onChange, selectedValue }: FilterBoxProps) {
+    return (
+        <div className={twMerge(["flex", "flex-col"])}>
+            {/* styles 시작 */}
+            <div className={twMerge(["space-y-4"])}>
+                <h3 className={twMerge(["font-bold", "text-sm"])}>{title}</h3>
+                <div className={twMerge(["space-y-2", "pr-2"])}>
+                    {data.map((style, index) => (
+                        <label
+                            key={index}
+                            className={twMerge([
+                                "flex",
+                                "items-center",
+                                "gap-3",
+                                "cursor-pointer",
+                            ])}>
+                            {/* input type="text"일 땐 value로 접근, type="checkbox"일 땐 checked로 접근 */}
+                            <input
+                                type={"checkbox"}
+                                className={twMerge(["w-4", "h-4", "rounded"])}
+                                checked={selectedValue.includes(style.value)}
+                                onChange={() => onChange(type, style.value)}
+                            />
+                            <span className={twMerge(["text-sm", "text-gray-600"])}>
+                                {style.label}
+                            </span>
+                        </label>
+                    ))}
+                </div>
+            </div>
+        </div>
+    );
+}
+
+interface FilterButtonBoxProps {
+    selectedSizes: string[];
+    onChange: (type: "styles" | "genders" | "sizes", value: string) => void;
+}
+
+function FilterButtonBox({ onChange, selectedSizes }: FilterButtonBoxProps) {
+    return (
+        <div className={twMerge(["flex", "flex-col"])}>
+            {/* styles 시작 */}
+            <div className={twMerge(["space-y-4"])}>
+                <h3 className={twMerge(["font-bold", "text-sm"])}>사이즈</h3>
+                <div className={twMerge(["pr-2", "flex", "flex-wrap", "gap-2"])}>
+                    {FILTER_SIZES.map((item, index) => {
+                        const isSelected = selectedSizes.includes(item);
+
+                        return (
+                            <button
+                                key={index}
+                                className={twMerge(
+                                    ["text-xs", "py-2", "px-3", "border", "rounded-sm"],
+                                    isSelected && ["text-white", "bg-black"],
+                                )}
+                                onClick={() => onChange("sizes", item)}>
+                                {item}
+                            </button>
+                        );
+                    })}
+                </div>
+            </div>
+        </div>
+    );
+}
