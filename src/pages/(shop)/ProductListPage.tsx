@@ -158,13 +158,42 @@ function ProductListPage() {
                             selectedValue={selectedGenders}
                             onChange={handleFilterChange}
                         />
-                        <FilterButtonBox onChange={handleFilterChange} selectedSizes={selectedSizes}/>
+                        <FilterButtonBox
+                            onChange={handleFilterChange}
+                            selectedSizes={selectedSizes}
+                        />
                     </aside>
                 </div>
 
                 {/* 상품 목록 */}
                 <div className={twMerge(["flex-1"])}>
-                    {products.length > 0 ? (
+                    {loading && (
+                        <div className={twMerge(["flex", "flex-wrap", "gap-y-3"])}>
+                            {/* 동일한 컴포넌트를 여러개 뽑을 수 있는 방법은 우리는 map을 알고 있음
+                                    그렇기 때문에 요소가 8개인 Array를 생성해서 map을 돌려줘야 함
+                                    배열을 만드는 방법 : Array(갯수)
+                                     [ , , , , , , , ]
+                                 */}
+
+                            {[...Array(8)].map((_ ,index) => (
+                                <div key={index} className={twMerge(["w-1/4", "px-3", "animate-pulse"])}>
+                                    <div
+                                        className={twMerge([
+                                            "bg-gray-200",
+                                            "aspect-3/4",
+                                            "w-full",
+                                            "mb-2",
+                                        ])}
+                                    />
+                                    <div
+                                        className={twMerge(["h-4", "bg-gray-200", "w-3/4", "mb-1"])}
+                                    />
+                                    <div className={twMerge(["h-4", "bg-gray-200", "w-1/2"])} />
+                                </div>
+                            ))}
+                        </div>
+                    )}
+                    {!loading && products.length > 0 ? (
                         <div className={twMerge(["flex", "flex-wrap", "gap-y-3"])}>
                             {products.map(product => (
                                 <div key={product.id} className={twMerge(["w-1/4", "px-3"])}>
