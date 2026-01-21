@@ -21,7 +21,7 @@ function Button({
     // 기본 스타일
     const baseStyle = twMerge(
         ["flex", "justify-center", "items-center"],
-        ["font-bold"],
+        ["font-bold", "border"],
         ["transition-color", "focus:outline-none"],
         ["disabled:opacity-50", "disabled:cursor-not-allowed"],
     );
