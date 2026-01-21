@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router";
 import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
-import type { Product, ProductImage } from "../../types/product.ts";
+import type { Product, ProductColor, ProductImage } from "../../types/product.ts";
 import { getProduct } from "../../api/product.api.ts";
 import { twMerge } from "tailwind-merge";
 
@@ -79,7 +79,20 @@ function ProductDetailPage() {
                 </div>
 
                 {/* 오른쪽 (상품 정보) */}
-                <div className={twMerge(["w-1/3"])}></div>
+                <div className={twMerge(["w-1/3", "space-y-6"])}>
+                    {/* 상품 대표 정보 */}
+                    <RightHeaderBox product={product} currentColor={currentColor} />
+
+                    {/* 옵션 선택 영역 */}
+                    <RightColorSelectBox
+                        product={product}
+                        currentColor={currentColor}
+                        selectedColorId={selectedColorId}
+                        setSelectedColorId={setSelectedColorId}
+                        setMainImage={setMainImage}
+                        setSelectedSize={setSelectedSize}
+                    />
+                </div>
             </div>
 
             {/* 상품 상세 */}
@@ -157,5 +170,83 @@ function ThumbnailBox({ image, mainImage, setMainImage }: ThumbnailBoxProps) {
                 className={twMerge(["w-full", "h-full", "object-cover"])}
             />
         </button>
+    );
+}
+
+interface RightHeaderBoxProps {
+    product: Product;
+    currentColor: ProductColor | undefined;
+}
+
+function RightHeaderBox({ product, currentColor }: RightHeaderBoxProps) {
+    return (
+        <div className={twMerge(["border-b", "border-gray-200", "pb-6"])}>
+            <h1 className={twMerge(["text-3xl", "font-bold"])}>{product.name}</h1>
+            <div className={twMerge(["text-xs", "text-gray-500"])}>{currentColor?.productCode}</div>
+            <div className={twMerge(["mt-6"])}>
+                <span className={twMerge(["text-2xl", "font-bold", "text-gray-900"])}>
+                    {product.price.toLocaleString()}
+                </span>
+                <span className={twMerge(["text-lg", "font-medium", "ml-1"])}>원</span>
+            </div>
+        </div>
+    );
+}
+
+interface RightColorSelectBoxProps {
+    product: Product;
+    currentColor: ProductColor | undefined;
+    selectedColorId: number | null;
+    setSelectedColorId: Dispatch<SetStateAction<number | null>>;
+    setMainImage: Dispatch<SetStateAction<string>>;
+    setSelectedSize: Dispatch<SetStateAction<string>>;
+}
+
+function RightColorSelectBox({
+    product,
+    currentColor,
+    selectedColorId,
+    setSelectedColorId,
+    setMainImage,
+    setSelectedSize,
+}: RightColorSelectBoxProps) {
+    return (
+        <div className={twMerge(["w-full"])}>
+            <div className={twMerge(["text-sm", "font-bold", "mb-3"])}>
+                색상
+                <span className={twMerge(["text-gray-500", "ml-2"])}>{currentColor?.colorName}</span>
+            </div>
+            <div className={twMerge(["flex", "flex-wrap", "gap-2"])}>
+                {product.colors.map((color, index) => {
+                    const thumb = color.images[0]?.url;
+                    const isSelected = selectedColorId === color.id;
+
+                    return (
+                        <button
+                            key={index}
+                            className={twMerge(["w-16", "h-16", "overflow-hidden", "relative"],
+                            isSelected ? ["border-black", "border-2"] : ["border-gray-200", "border"]
+                            )}
+                            onClick={() => {
+                                setSelectedColorId(color.id);
+                                setMainImage(thumb || "");
+                                setSelectedSize("");
+                            }}>
+                            {thumb ? (
+                                <img
+                                    src={thumb}
+                                    alt={color.colorName}
+                                    className={twMerge(["w-full", "h-full", "object-cover"])}
+                                />
+                            ) : (
+                                <div className={twMerge("w-full", "h-full", "bg-gray-50")}>
+                                    No Image
+                                </div>
+                            )}
+                        </button>
+                    );
+                })}
+            </div>
+        </div>
     );
 }
