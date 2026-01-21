@@ -1,6 +1,6 @@
 import { useNavigate, useParams } from "react-router";
-import { useEffect, useState } from "react";
-import type { Product } from "../../types/product.ts";
+import { type Dispatch, type SetStateAction, useEffect, useState } from "react";
+import type { Product, ProductImage } from "../../types/product.ts";
 import { getProduct } from "../../api/product.api.ts";
 import { twMerge } from "tailwind-merge";
 
@@ -64,6 +64,18 @@ function ProductDetailPage() {
                     {/* 큰 이미지 박스 */}
                     <MainImageBox product={product} mainImage={mainImage} />
                     {/* 작은 이미지가 한 줄로 들어가는 박스 */}
+                    {currentColor && currentColor.images.length > 1 && (
+                        <div className={twMerge(["flex", "gap-2", "overflow-x-auto"])}>
+                            {currentColor.images.map((image, index) => (
+                                <ThumbnailBox
+                                    key={index}
+                                    mainImage={mainImage}
+                                    setMainImage={setMainImage}
+                                    image={image}
+                                />
+                            ))}
+                        </div>
+                    )}
                 </div>
 
                 {/* 오른쪽 (상품 정보) */}
@@ -121,5 +133,29 @@ function MainImageBox({ product, mainImage }: MainImageBoxProps) {
                 )}
             </div>
         </div>
+    );
+}
+
+interface ThumbnailBoxProps {
+    image: ProductImage;
+    mainImage: string;
+    setMainImage: Dispatch<SetStateAction<string>>;
+}
+
+function ThumbnailBox({ image, mainImage, setMainImage }: ThumbnailBoxProps) {
+    return (
+        <button
+            onMouseEnter={() => setMainImage(image.url)}
+            className={twMerge(
+                ["w-20", "h-24", "bg-gray-50", "overflow-hidden"],
+                ["border"],
+                mainImage === image.url ? "border-black" : "border-transparent",
+            )}>
+            <img
+                src={image.url}
+                alt={"thumb"}
+                className={twMerge(["w-full", "h-full", "object-cover"])}
+            />
+        </button>
     );
 }
