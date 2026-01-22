@@ -115,11 +115,18 @@ function ProductDetailPage() {
                     </div>
 
                     <Accordion title={"상품 설명"}>{product.summary}</Accordion>
+
+                    <Accordion title={"상품 정보 고시"}>
+                        <RightInformationBox product={product} />
+                    </Accordion>
                 </div>
             </div>
 
             {/* 상품 상세 */}
-            <div></div>
+            <div
+                className={twMerge(["mx-auto", "max-w-215", "mt-24"])}
+                dangerouslySetInnerHTML={{ __html: product.description }}
+            />
         </div>
     );
 }
@@ -381,7 +388,9 @@ function RightQuantitySelectBox({ price, quantity, setQuantity }: RightQuantityS
                     "pt-4",
                     "border-t",
                 ])}>
-                <span className={twMerge(["text-sm", "font-bold", "text-gray-700"])}>총 상품금액</span>
+                <span className={twMerge(["text-sm", "font-bold", "text-gray-700"])}>
+                    총 상품금액
+                </span>
                 <div>
                     <span className={twMerge(["text-2xl", "font-extrabold", "text-orange-600"])}>
                         {(quantity * price).toLocaleString()}
@@ -390,5 +399,52 @@ function RightQuantitySelectBox({ price, quantity, setQuantity }: RightQuantityS
                 </div>
             </div>
         </div>
+    );
+}
+
+interface RightInformationBoxProps {
+    product: Product;
+}
+
+function RightInformationBox({ product }: RightInformationBoxProps) {
+    return (
+        <table className={twMerge(["w-full", "text-xs", "text-left"])}>
+            <colgroup>
+                <col className={"w-40"} />
+                <col />
+            </colgroup>
+            <tbody>
+                <tr>
+                    <th className="py-3 font-medium text-gray-900">소재</th>
+                    <td className="py-3 text-gray-600">{product.material || "-"}</td>
+                </tr>
+                <tr>
+                    <th className="py-3 font-medium text-gray-900">제조사</th>
+                    <td className="py-3 text-gray-600">{product.manufacturer || "-"}</td>
+                </tr>
+                <tr>
+                    <th className="py-3 font-medium text-gray-900">제조국</th>
+                    <td className="py-3 text-gray-600">{product.originCountry || "-"}</td>
+                </tr>
+                <tr>
+                    <th className="py-3 font-medium text-gray-900">제조년월</th>
+                    <td className="py-3 text-gray-600">{product.manufactureDate || "-"}</td>
+                </tr>
+                <tr>
+                    <th className="py-3 font-medium text-gray-900">취급시 주의사항</th>
+                    <td className="py-3 text-gray-600 leading-relaxed">
+                        {product.careInstructions || "-"}
+                    </td>
+                </tr>
+                <tr>
+                    <th className="py-3 font-medium text-gray-900">품질보증기준</th>
+                    <td className="py-3 text-gray-600">{product.qualityAssurance || "-"}</td>
+                </tr>
+                <tr>
+                    <th className="py-3 font-medium text-gray-900">A/S 책임자/전화번호</th>
+                    <td className="py-3 text-gray-600">{product.asPhone || "-"}</td>
+                </tr>
+            </tbody>
+        </table>
     );
 }
