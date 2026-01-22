@@ -4,6 +4,7 @@ import type { Product, ProductColor, ProductImage } from "../../types/product.ts
 import { getProduct } from "../../api/product.api.ts";
 import { twMerge } from "tailwind-merge";
 import Button from "../../components/common/Button.tsx";
+import Accordion from "../../components/common/Accordion.tsx";
 
 function ProductDetailPage() {
     const { id } = useParams();
@@ -108,8 +109,12 @@ function ProductDetailPage() {
 
                     <div className={twMerge(["flex", "flex-col", "gap-3"])}>
                         <Button size={"lg"}>바로구매</Button>
-                        <Button size={"lg"} variant={"secondary"}>장바구니</Button>
+                        <Button size={"lg"} variant={"secondary"}>
+                            장바구니
+                        </Button>
                     </div>
+
+                    <Accordion title={"상품 설명"}>{product.summary}</Accordion>
                 </div>
             </div>
 
