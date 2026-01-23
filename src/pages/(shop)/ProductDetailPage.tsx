@@ -99,7 +99,6 @@ function ProductDetailPage() {
         }
     }
 
-
     return (
         <div className={twMerge(["w-full", "max-w-350", "mx-auto", "py-40"])}>
             {/* 상단 상품 정보 */}
