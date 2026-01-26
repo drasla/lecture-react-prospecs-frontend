@@ -2,12 +2,10 @@ import TopHeader from "../components/layout/TopHeader.tsx";
 import Header from "../components/layout/Header.tsx";
 import { Outlet } from "react-router";
 import Footer from "../components/layout/Footer.tsx";
-import useLayoutStore from "../stores/useLayoutStore.ts";
 import { twMerge } from "tailwind-merge";
+import GlobalModal from "../components/modals/GlobalModal.tsx";
 
 function Layout() {
-    const { isTopBannerVisible, topBannerHeight } = useLayoutStore();
-
     return (
         <div className={twMerge(["min-h-screen", "flex", "flex-col"])}>
             {/*
@@ -31,6 +29,8 @@ function Layout() {
                 <Outlet />
             </main>
             <Footer />
+
+            <GlobalModal />
         </div>
     );
 }

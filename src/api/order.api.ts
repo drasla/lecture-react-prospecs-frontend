@@ -1,8 +1,8 @@
-import type { ConfirmOrderRequest, CreateOrderRequest } from "../types/order.ts";
+import type { ConfirmOrderRequest, CreateOrderRequest, Order } from "../types/order.ts";
 import { httpClient } from "./axios.ts";
 
 export const createOrder = async (data: CreateOrderRequest) => {
-    const response = await httpClient.post("/orders", data);
+    const response = await httpClient.post<Order>("/orders", data);
     return response.data;
 }
 
