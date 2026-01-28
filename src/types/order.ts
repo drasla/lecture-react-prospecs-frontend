@@ -23,15 +23,14 @@ export interface ConfirmOrderRequest {
     amount: number;
 }
 
-export enum OrderStatus {
-    PENDING = "PENDING",
-    PAID = "PAID",
-    SHIPPED = "SHIPPED",
-    DELIVERED = "DELIVERED",
-    CANCELLED = "CANCELLED",
-    RETURN_REQUESTED = "RETURN_REQUESTED",
-    RETURN_COMPLETED = "RETURN_COMPLETED"
-}
+export type OrderStatus =
+    | "PENDING"
+    | "PAID"
+    | "SHIPPED"
+    | "DELIVERED"
+    | "CANCELLED"
+    | "RETURN_REQUESTED"
+    | "RETURN_COMPLETED";
 
 export interface OrderItem {
     id: number;
