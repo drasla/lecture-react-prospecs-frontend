@@ -72,7 +72,7 @@ function Header() {
             alert("로그아웃 되었습니다.");
             navigate("/");
         }
-    }
+    };
 
     // 스크롤이 내려갔는지 안 내려갔는지를 체크해서 스타일링을 해줘야 함
     const [isScrolled, setIsScrolled] = useState(false);
@@ -117,7 +117,7 @@ function Header() {
             )}>
             <div
                 className={twMerge(
-                    ["container", "mx-auto", "px-4", "h-20"],
+                    ["w-full", "mx-auto", "px-4", "h-20"],
                     ["flex", "justify-between", "items-center"],
                 )}>
                 {/* 왼쪽 영역 */}
@@ -192,11 +192,16 @@ function Header() {
                         </button>
                     </div>
                     {isLoggedIn && user ? (
-                        <button
-                            onClick={handleLogout}
-                            className="text-sm font-bold hover:text-gray-500 transition-colors">
-                            LOGOUT
-                        </button>
+                        <>
+                            <Link to={"/my"} className={twMerge(["text-sm", "font-bold"])}>
+                                MYPAGE
+                            </Link>
+                            <button
+                                onClick={handleLogout}
+                                className="text-sm font-bold hover:text-gray-500 transition-colors">
+                                LOGOUT
+                            </button>
+                        </>
                     ) : (
                         <Link
                             to={"/login"}

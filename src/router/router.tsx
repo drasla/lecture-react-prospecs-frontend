@@ -10,6 +10,9 @@ import CartPage from "../pages/(shop)/CartPage.tsx";
 import OrderPage from "../pages/(shop)/OrderPage.tsx";
 import OrderSuccessPage from "../pages/(shop)/OrderSuccessPage.tsx";
 import OrderFailPage from "../pages/(shop)/OrderFailPage.tsx";
+import MyLayout from "../layouts/MyLayout.tsx";
+import MyOrderList from "../pages/(shop)/MyOrderList.tsx";
+import MyOrderDetail from "../pages/(shop)/MyOrderDetail.tsx";
 
 // loader : 해당 주소에 사용자가 가려고 할 때 (요청), 화면에 출력해주기 이전 실행되는 함수를 지정
 //           조건을 걸고, 아무런 문제가 없으면 null을 반환해서 화면이 출력이 되도록 해야함
@@ -42,6 +45,21 @@ const router = createBrowserRouter([
             },
             { path: "category/:id", element: <ProductListPage /> },
             { path: "product/:id", element: <ProductDetailPage /> },
+            {
+                path: "my",
+                element: <MyLayout />,
+                children: [
+                    { index: true, element: <div>마이페이지</div> },
+                    {
+                        path: "orders",
+                        children: [
+                            { index: true, element: <MyOrderList /> },
+                            { path: ":id", element: <MyOrderDetail /> },
+                        ],
+                    },
+                    // { path: "order/:id", element: <MyOrderDetail /> }
+                ],
+            },
         ],
     },
 ]);
