@@ -1,10 +1,12 @@
 import useModalStore from "../../stores/useModalStore.ts";
 import PostcodeModal from "./PostcodeModal.tsx";
 import PaymentModal from "./PaymentModal.tsx";
+import ReviewModal from "./ReviewModal.tsx";
 
 const MODAL_COMPONENT = {
     POSTCODE: PostcodeModal,
     PAYMENT: PaymentModal,
+    REVIEW_FORM: ReviewModal,
 }
 
 function GlobalModal() {

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export type ModalType = "POSTCODE" | "PAYMENT" | null;
+export type ModalType = "POSTCODE" | "PAYMENT" | "REVIEW_FORM" | null;
 
 interface ModalState {
     isOpen: boolean;

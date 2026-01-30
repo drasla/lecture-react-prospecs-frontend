@@ -4,10 +4,12 @@ import type { Order } from "../../types/order.ts";
 import { cancelOrder, getOrderDetail } from "../../api/order.api.ts";
 import OrderStatusBadge from "../../components/orders/OrderStatusBadge.tsx";
 import Button from "../../components/common/Button.tsx";
+import useModalStore from "../../stores/useModalStore.ts";
 
 function MyOrderDetail() {
     const { id } = useParams();
     const navigate = useNavigate();
+    const { openModal } = useModalStore();
 
     const [order, setOrder] = useState<Order | null>(null);
     const [loading, setLoading] = useState(true);
@@ -144,7 +146,16 @@ function MyOrderDetail() {
                                         <Button
                                             size="sm"
                                             variant="secondary"
-                                            onClick={() => {}}>
+                                            onClick={() => {
+                                                return openModal("REVIEW_FORM", {
+                                                    productId: item.productSize.productColor.product.id,
+                                                    productName: item.productSize.productColor.product.name,
+                                                    productImage: item.productSize.productColor.images?.[0]?.url,
+                                                    onSuccess: () => {
+                                                        navigate("/my/reviews");
+                                                    }
+                                                })
+                                            }}>
                                             리뷰작성
                                         </Button>
                                     </div>
