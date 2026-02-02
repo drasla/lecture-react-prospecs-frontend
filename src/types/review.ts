@@ -21,6 +21,12 @@ export interface CreateReviewParams {
     imageUrls?: string[];
 }
 
+export interface UpdateReviewParams {
+    rating?: number;
+    content?: string;
+    imageUrls?: string[];
+}
+
 export interface MyReview {
     id: number;
     rating: number;

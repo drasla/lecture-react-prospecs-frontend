@@ -4,9 +4,11 @@ import type { MyReview } from "../../types/review.ts";
 import { deleteReviews, getMyReviews } from "../../api/review.api.ts";
 import { FaPen, FaRegStar, FaStar, FaTrash } from "react-icons/fa";
 import { twMerge } from "tailwind-merge";
+import useModalStore from "../../stores/useModalStore.ts";
 
 function MyReviewList() {
     const navigate = useNavigate();
+    const { openModal } = useModalStore();
 
     const [reviews, setReviews] = useState<MyReview[]>([]);
     const [loading, setLoading] = useState(true);
@@ -26,6 +28,22 @@ function MyReviewList() {
         fetchReviews().then(() => {});
     }, []);
 
+    const handleEdit = (review: MyReview) => {
+        openModal("REVIEW_FORM", {
+            mode: "EDIT",
+            reviewId: review.id,
+            initialRating: review.rating,
+            initialContent: review.content,
+            initialImage: review.images.map((image) => image.url),
+            productId: review.product.id,
+            productName: review.product.name,
+            productImage: review.product.thumbnail,
+            onSuccess: () => {
+                fetchReviews().then(() => {}); // 리뷰 목록을 다시 불러와서 화면을 갱신해라
+            },
+        });
+    };
+
     const handleDelete = async (reviewId: number) => {
         if (!window.confirm("정말 이 리뷰를 삭제하시겠습니까?")) {
             return;
@@ -39,7 +57,7 @@ function MyReviewList() {
             console.log(e);
             alert("리뷰 삭제 중 오류가 발생했습니다.");
         }
-    }
+    };
 
     if (loading)
         return <div className="py-20 text-center text-gray-500">리뷰를 불러오는 중...</div>;
@@ -93,7 +111,7 @@ function MyReviewList() {
                                 {/* 수정/삭제 버튼 */}
                                 <div className="flex gap-2">
                                     <button
-                                        onClick={() => {}}
+                                        onClick={() => handleEdit(review)}
                                         className="text-gray-400 hover:text-blue-600 p-2 transition-colors"
                                         title="수정">
                                         <FaPen size={14} />

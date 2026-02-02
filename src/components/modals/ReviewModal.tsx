@@ -6,19 +6,38 @@ import { FaStar } from "react-icons/fa";
 import Button from "../common/Button.tsx";
 import { FaX } from "react-icons/fa6";
 import { uploadImage } from "../../api/upload.api.ts";
-import { createReview } from "../../api/review.api.ts";
+import { createReview, updateReviews } from "../../api/review.api.ts";
 
 function ReviewModal() {
     const { isOpen, closeModal, modalProps } = useModalStore();
-    const { productId, productName, productImage, onSuccess } = modalProps;
+    const {
+        productId,
+        productName,
+        productImage,
+        onSuccess,
+        mode,
+        reviewId,
+        initialRating,
+        initialContent,
+        initialImage,
+    } = modalProps;
 
     // 이미지, 별점, 리뷰내용
 
-    const [rating, setRating] = useState(5);
-    const [content, setContent] = useState("");
+    const isEditMode = mode === "EDIT";
+
+    const [rating, setRating] = useState(initialRating || 5);
+    const [content, setContent] = useState(initialContent || "");
     const [isSubmitting, setIsSubmitting] = useState(false);
+
+    // 이미 업로드가 끝나서, 진짜 URL을 관리하는 state
+    const [existingImage, setExistingImage] = useState<string[]>(initialImage || []);
+
+    // 업로드를 해야하는, 이 화면에서 추가되는 파일 관련 state
     const [newFiles, setNewFiles] = useState<File[]>([]);
     const [newFilePreviews, setNewFilePreviews] = useState<string[]>([]);
+
+    const allPreviews = [...existingImage, ...newFilePreviews];
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -26,23 +45,34 @@ function ReviewModal() {
         if (e.target.files) {
             const files = Array.from(e.target.files);
 
-            if (files.length > 5) {
+            if (existingImage.length + newFiles.length > 5) {
                 alert("이미지는 최대 5장까지 등록 가능합니다.");
                 return;
             }
 
             // 사용자가 선택한 파일은 newFiles에 저장
-            setNewFiles(files);
+            const newFileArr = [...newFiles, ...files];
+            setNewFiles(newFileArr);
 
             // 미리보기를 하기 위해 미리보기 URL을 따로 저장해서 화면에 보여줘야 함
             const newPreviewArr = files.map(file => URL.createObjectURL(file));
-            setNewFilePreviews(newPreviewArr);
+            setNewFilePreviews([...newFilePreviews, ...newPreviewArr]);
         }
     };
 
     const removeImage = (index: number) => {
-        setNewFiles(prev => prev.filter((_, i) => i !== index));
-        setNewFilePreviews(prev => prev.filter((_, i) => i !== index));
+        if (index < existingImage.length) {
+            // 원래 업로드 된 파일을 삭제하는 구문
+            // ex. 원래 파일이 3개, 새로 등록하는 파일이 2개 -> existingImage의 length가 3, newFile이 2
+            setExistingImage(prev => prev.filter((_, i) => i !== index))
+        } else {
+            // 새로 등록 요청을 하는 파일을 삭제하는 구문
+            // 요청하는 이미지가 4라면. [...existingImage, ...newFile] 이니까.
+            // existingImage의 length를 뺀 숫자로 인덱스를 찾아야 함
+            const newFileIndex = index - existingImage.length;
+            setNewFiles(prev => prev.filter((_, i) => i !== newFileIndex));
+            setNewFilePreviews(prev => prev.filter((_, i) => i !== newFileIndex));
+        }
     };
 
     const handleSubmit = async () => {
@@ -67,8 +97,7 @@ function ReviewModal() {
             // }
             // uploadImage 라고 하는 함수는, 지금 당장 값을 알 수 있는게 아니라 백엔드랑 통신을 한 이후에 결과를 알 수 있는
             // 비동기 함수. 그러기 때문에 계속 사용할 때 async - await 을 사용했던 것
-            const uploadPromises = newFiles.map(file => uploadImage(file, "reviews"));   // Array 형태로 반환됨
-
+            const uploadPromises = newFiles.map(file => uploadImage(file, "reviews")); // Array 형태로 반환됨
             // 비동기 함수들의 결과를 담는 array를 만들었지만, 그 안에서 await을 쓰지 않았음
             // 그렇기 때문에 uploadPromises 변수의 타입이 Promise<string>[] -> 비동기 함수 결과값의 array인데, 그 비동기 함수 결과는 string이다.
 
@@ -78,29 +107,37 @@ function ReviewModal() {
             const finalImageUrls = await Promise.all(uploadPromises);
 
             // 2. 그 받아온 url들을 가지고 백엔드에게 리뷰 등록 요청
-            await createReview({
-                productId,
-                rating,
-                content,
-                imageUrls: finalImageUrls,
-            })
+            if (isEditMode && reviewId) {
+                await updateReviews(reviewId, {
+                    rating,
+                    content,
+                    imageUrls: [...existingImage, ...finalImageUrls]
+                });
+            } else {
+                await createReview({
+                    productId,
+                    rating,
+                    content,
+                    imageUrls: finalImageUrls,
+                });
+            }
 
             // 3. 성공했다는 알람 띄움
-            alert("리뷰가 등록되었습니다.");
+            alert(isEditMode ? "리뷰가 수정되었습니다." : "리뷰가 등록되었습니다.");
 
             // 4. 모달을 닫음
             closeModal();
             if (onSuccess) onSuccess();
         } catch (e) {
             console.log(e);
-            alert("리뷰 등록에 실패했습니다.");
+            alert(`리뷰 ${isEditMode ? "수정" : "등록"}에 실패했습니다.`);
         } finally {
             setIsSubmitting(false);
         }
-    }
+    };
 
     return (
-        <Modal isOpen={isOpen} onClose={closeModal} title={"리뷰 작성"}>
+        <Modal isOpen={isOpen} onClose={closeModal} title={isEditMode ? "리뷰 수정" : "리뷰 작성"}>
             <div className={twMerge(["py-6", "space-y-5"])}>
                 {/* 상품 정보 요약 */}
                 <div
@@ -174,9 +211,9 @@ function ReviewModal() {
                         />
                     </div>
                     {/* 사진 미리보기 */}
-                    {newFilePreviews.length > 0 && (
+                    {allPreviews.length > 0 && (
                         <div className={twMerge(["flex", "gap-2", "overflow-x-auto", "py-2"])}>
-                            {newFilePreviews.map((url, index) => (
+                            {allPreviews.map((url, index) => (
                                 <div
                                     key={index}
                                     className={twMerge(
