@@ -170,7 +170,7 @@ interface RenderStarProps {
     rating: number;
 }
 
-function RenderStar({ rating }: RenderStarProps) {
+export function RenderStar({ rating }: RenderStarProps) {
     // rating 3 : 별별별
     // const star = [];
     // for (let i = 0; i < rating; i++) {

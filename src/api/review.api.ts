@@ -1,4 +1,4 @@
-import type { CreateReviewParams, MyReview, UpdateReviewParams } from "../types/review.ts";
+import type { CreateReviewParams, MyReview, Review, UpdateReviewParams } from "../types/review.ts";
 import { httpClient } from "./axios.ts";
 
 export const createReview = async (data: CreateReviewParams) => {
@@ -10,6 +10,11 @@ export const getMyReviews = async () => {
     const response = await httpClient.get<MyReview[]>("/reviews/me");
     return response.data;
 };
+
+export const getProductReviews = async (productId: number) => {
+    const response = await httpClient.get<Review[]>(`products/${productId}/reviews`);
+    return response.data;
+}
 
 export const updateReviews = async (reviewId: number, data: UpdateReviewParams) => {
     const response = await httpClient.put(`/reviews/${reviewId}`, data);

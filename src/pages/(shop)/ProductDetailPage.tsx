@@ -9,6 +9,7 @@ import useCartStore from "../../stores/useCartStore.ts";
 import useAuthStore from "../../stores/useAuthStore.ts";
 import useOrderStore from "../../stores/useOrderStore.ts";
 import type { CartItem } from "../../types/cart.ts";
+import ProductReviews from "../../components/shop/ProductReviews.tsx";
 
 function ProductDetailPage() {
     const { id } = useParams();
@@ -223,6 +224,8 @@ function ProductDetailPage() {
                 className={twMerge(["mx-auto", "max-w-215", "mt-24"])}
                 dangerouslySetInnerHTML={{ __html: product.description }}
             />
+
+            <ProductReviews productId={product.id} />
         </div>
     );
 }
