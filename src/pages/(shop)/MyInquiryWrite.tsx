@@ -9,6 +9,7 @@ import { uploadImage } from "../../api/upload.api.ts";
 import { createInquiry } from "../../api/inquiry.api.ts";
 import Button from "../../components/common/Button.tsx";
 import Accordion from "../../components/common/Accordion.tsx";
+import Editor from "../../components/common/Editor.tsx";
 
 function MyInquiryWrite() {
     const navigate = useNavigate();
@@ -121,6 +122,7 @@ function MyInquiryWrite() {
                         내용
                     </label>
                     {/* 에디터 자리 */}
+                    <Editor value={content} onChange={setContent} />
                 </div>
 
                 <div className={twMerge(["flex", "flex-col", "gap-2"])}>
