@@ -1,9 +1,10 @@
 import { EditorContent, useEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { twMerge } from "tailwind-merge";
-import EditorToolbar from "./EditorToolbar.tsx";
+import EditorToolbar, { FontSize } from "./EditorToolbar.tsx";
 import Image from "@tiptap/extension-image";
 import { uploadImage } from "../../api/upload.api.ts";
+import { TextStyle } from "@tiptap/extension-text-style";
 
 interface EditorProps {
     value: string;
@@ -17,8 +18,10 @@ function Editor({ value, onChange, placeholder }: EditorProps) {
             StarterKit,
             Image.configure({
                 inline: true,
-                allowBase64: false,   // 이미지를 Base64로 직접 웹에디터에 추가할 것이냐, 아니면 URL만 쓸 것이냐
-            })
+                allowBase64: false, // 이미지를 Base64로 직접 웹에디터에 추가할 것이냐, 아니면 URL만 쓸 것이냐
+            }),
+            FontSize,
+            TextStyle,
         ],
         content: value, // 초기값
         onUpdate: ({ editor }) => {
@@ -27,9 +30,9 @@ function Editor({ value, onChange, placeholder }: EditorProps) {
         },
         editorProps: {
             attributes: {
-                class: twMerge(["min-h-[440px]", "p-4"])
-            }
-        }
+                class: twMerge(["min-h-[440px]", "p-4"]),
+            },
+        },
     });
 
     // 이미지 업로드 핸들러
@@ -58,8 +61,8 @@ function Editor({ value, onChange, placeholder }: EditorProps) {
                 console.log(error);
                 alert("이미지 업로드 실패");
             }
-        }
-    }
+        };
+    };
 
     return (
         <div
@@ -68,7 +71,7 @@ function Editor({ value, onChange, placeholder }: EditorProps) {
                 ["bg-white", "flex", "flex-col", "h-125"],
             )}>
             <div className={twMerge(["flex-none", "z-10"])}>
-                <EditorToolbar editor={editor} onImageUpload={handleImageUpload}/>
+                <EditorToolbar editor={editor} onImageUpload={handleImageUpload} />
             </div>
             <div className={twMerge(["grow", "overflow-y-auto", "cursor-text"])}>
                 <EditorContent editor={editor} placeholder={placeholder} className={"h-full"} />
